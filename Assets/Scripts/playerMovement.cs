@@ -17,7 +17,6 @@ public class playerMovement : MonoBehaviour
     public float speed;
     public float Gravity = -9.8f;
     public Vector3 drag;
-    public float JumpHeight;
     public Text scoreText;
     
 
@@ -29,7 +28,7 @@ public class playerMovement : MonoBehaviour
     private Vector2 movement;
     private Vector3 movement_direction = Vector3.zero;
     private int score;
-
+    private ParticleSystem particles;
 
 
     
@@ -38,6 +37,7 @@ public class playerMovement : MonoBehaviour
     {
         playerController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        particles = GetComponent<ParticleSystem>();
         score = 0;
         
     }
@@ -50,12 +50,11 @@ public class playerMovement : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         movement = new Vector2(h, v);
-
         //These lines of code change the rotation of the player object so that it can walk in the right the direction according to the orientation of the camera
         Vector3 moveInput = transform.forward * movement.y + transform.right * movement.x;
         movement_direction.x = moveInput.x * speed;
         movement_direction.z = moveInput.z * speed;
-        playerController.Move(movement_direction * Time.deltaTime);
+
 
 
         /*moves the body forward in the direction
@@ -64,23 +63,42 @@ public class playerMovement : MonoBehaviour
             transform.forward = move;
         }
         */
-        if (Input.GetAxis("Vertical") != 0)
-        {
-            animator.SetInteger("walking", 1);
-        }
-        else animator.SetInteger("walking", 0);
 
 
 
         //check grounded
         if (playerController.isGrounded)
         {
-            //Jump
-            if (Input.GetKeyDown("space"))
+
+            //Walking Animations
+
+
+            //Walking Forward
+            if (v > 0)
             {
-                velocity.y += Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                //Debug.Log(v);
+
+                animator.SetInteger("condition", 1);
+            }
+            else
+            {
+                animator.SetInteger("condition", 0);
+                
             }
 
+            //Walking backwards
+            if (Input.GetAxis("Vertical") < 0)
+            {
+                //Debug.Log(v);
+                animator.SetInteger("condition", 2);
+
+            }
+            else
+            {
+                animator.SetInteger("condition", 0);
+            }
+            playerController.Move(movement_direction * Time.deltaTime);
+            
         }
 
         //Gravity and Drag physics

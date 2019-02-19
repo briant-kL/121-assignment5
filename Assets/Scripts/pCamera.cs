@@ -12,6 +12,7 @@ public class pCamera : MonoBehaviour
     public bool cameraFPS = false;
     public float sensitivity;
     public Button _button;
+    public GameObject target;
 
 
     private float x;
@@ -37,12 +38,13 @@ public class pCamera : MonoBehaviour
         //fps controls
         if (cameraFPS == true)
         {
-            transform.position = player.transform.position;
+            transform.position = target.transform.position;
             //transform.rotation = player.transform.rotation;
             transform.Rotate(0, h, 0);
             if (Input.GetAxis("Mouse X") != 0)
             {
                 player.transform.Rotate(0, h, 0);
+                
                 //player.transform.position = position;
             }
         }
@@ -56,12 +58,13 @@ public class pCamera : MonoBehaviour
 
             Quaternion rotation = Quaternion.Euler(0, x, 0);
             Vector3 position = rotation * new Vector3(0f, 0f, -minDistance) + player.transform.position;
-
+            Vector3 position2 = rotation * new Vector3(0f, 0f, -minDistance) + target.transform.position;
             transform.rotation = rotation;
-            transform.position = position;
+            transform.position = position2;
             if (Input.GetAxis("Mouse X") != 0)
             {
                 player.transform.Rotate(0, h, 0);
+                target.transform.Rotate(0, h, 0);
             }
 
             /*
