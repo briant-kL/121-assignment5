@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\pCamera.cs" />
     <Compile Include="Assets\Scripts\playerMovement.cs" />
+    <Compile Include="Assets\Scripts\ragdoll.cs" />
     <Compile Include="Assets\Scripts\rotater.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/briant/Documents/GitHub/121-assignment5/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

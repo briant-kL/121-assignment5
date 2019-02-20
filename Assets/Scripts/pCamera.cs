@@ -79,7 +79,7 @@ public class pCamera : MonoBehaviour
             
             */
         }
-        checkclick();
+        //checkclick();
 
     }
 
@@ -93,6 +93,7 @@ public class pCamera : MonoBehaviour
         
     }
 
+    /*
     void checkclick()
     {
         if (Input.GetKeyDown("e"))
@@ -115,12 +116,12 @@ public class pCamera : MonoBehaviour
         }
     }
 
- /*
+ 
     void TaskOnClick()
     {
         cameraFPS = true;
         Debug.Log("button has been clicked");
     }
   */
-    
+
 }

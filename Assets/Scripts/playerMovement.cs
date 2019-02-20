@@ -17,8 +17,8 @@ public class playerMovement : MonoBehaviour
     public float speed;
     public float Gravity = -9.8f;
     public Vector3 drag;
-    public Text scoreText;
-    
+    public float sprint;
+    public GameObject ragdoll;
 
 
     //private variables
@@ -27,8 +27,9 @@ public class playerMovement : MonoBehaviour
     private Vector3 velocity;
     private Vector2 movement;
     private Vector3 movement_direction = Vector3.zero;
-    private int score;
+    
     private ParticleSystem particles;
+    private float _defaultSpeed;
 
 
     
@@ -38,14 +39,54 @@ public class playerMovement : MonoBehaviour
         playerController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         particles = GetComponent<ParticleSystem>();
-        score = 0;
         
+        _defaultSpeed = speed;
+
+
+        //Debug.Log(animator.GetLayerIndex("WK_heavy_infantry_08_attack_B"));
+        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        PlayerMovement();
+        Attack();
+    }
 
+
+
+
+    void Attack()
+    {
+        
+        if (Input.GetMouseButtonDown(0))
+        {
+            animator.SetBool("attacking", true);
+            animator.SetInteger("condition", 4);
+            speed = speed/2;
+            AttackRoutine();
+        }
+        
+        if (Input.GetMouseButtonUp(0))
+        {
+            animator.SetBool("attacking", false);
+            animator.SetInteger("condition", 0);
+            speed = _defaultSpeed;
+        }
+
+        
+    }
+
+    IEnumerator AttackRoutine()
+    {
+        yield return new WaitForSeconds(1);
+        
+    }
+
+    void PlayerMovement()
+    {
         //Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
@@ -54,51 +95,100 @@ public class playerMovement : MonoBehaviour
         Vector3 moveInput = transform.forward * movement.y + transform.right * movement.x;
         movement_direction.x = moveInput.x * speed;
         movement_direction.z = moveInput.z * speed;
+        playerController.Move(movement_direction * Time.deltaTime);
+
+        
+        //Walking Animations
 
 
-
-        /*moves the body forward in the direction
-        if(move != Vector3.zero)
+        //Walking Forward
+        if (Input.GetKey("w"))
         {
-            transform.forward = move;
+            //Debug.Log(v);
+            //animator.SetBool("walking", true);
+            animator.SetInteger("condition", 1);
+
         }
-        */
+
+        else if (Input.GetKeyUp("w"))
+        {
+            //animator.SetBool("walking", false);
+            animator.SetInteger("condition", 0);
+
+        }
+
+   
+        //Sprint
+        if (Input.GetKey(KeyCode.LeftShift) )
+        {
+            animator.SetBool("running", true);
+            speed = sprint;
+            
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            animator.SetBool("running", false);
+            speed = _defaultSpeed;
+        }
+
+
+        //walkbackwards
+        if (Input.GetKey("s"))
+        {
+            //Debug.Log(v);
+            //animator.SetBool("backwalking", true);
+            animator.SetInteger("condition", -1);
+        }
+        else if (Input.GetKeyUp("s"))
+        {
+            //animator.SetBool("backwalking", false);
+            animator.SetInteger("condition", 0);
+
+        }
+
+
+        if (Input.GetKey("a"))
+        {
+           // Debug.Log(v);
+
+            animator.SetInteger("condition", 1);
+
+        }
+
+        else if (Input.GetKeyUp("a"))
+        {
+
+            animator.SetInteger("condition", 0);
+
+        }
+
+        if (Input.GetKey("d"))
+        {
+           // Debug.Log(v);
+
+            animator.SetInteger("condition", -1);
+
+        }
+
+        else if (Input.GetKeyUp("d"))
+        {
+
+            animator.SetInteger("condition", 0);
+
+        }
+
+
+
+
+
 
 
 
         //check grounded
         if (playerController.isGrounded)
         {
-
-            //Walking Animations
-
-
-            //Walking Forward
-            if (v > 0)
-            {
-                //Debug.Log(v);
-
-                animator.SetInteger("condition", 1);
-            }
-            else
-            {
-                animator.SetInteger("condition", 0);
-                
-            }
-
-            //Walking backwards
-            if (Input.GetAxis("Vertical") < 0)
-            {
-                //Debug.Log(v);
-                animator.SetInteger("condition", 2);
-
-            }
-            else
-            {
-                animator.SetInteger("condition", 0);
-            }
-            playerController.Move(movement_direction * Time.deltaTime);
             
+
         }
 
         //Gravity and Drag physics
@@ -112,18 +202,20 @@ public class playerMovement : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.CompareTag("kill_env"))
+        {
+            gameObject.SetActive(false);
+            Debug.Log("You died");
+
+            ragdoll.SetActive(true);
+        }
         if (other.gameObject.CompareTag("coins"))
-        { 
-           other.gameObject.SetActive(false);
-            score++;
-            Debug.Log(score);
-            setScoreText();
+        {
+            Debug.Log("Collected a coin!");
+            other.gameObject.SetActive(false);
         }
     }
 
-    void setScoreText()
-    {
-        scoreText.text = "Score: " + score.ToString();
-    }
+    
 
 }
