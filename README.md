@@ -3,6 +3,7 @@
 
 Controls
 WASD - Character movement
+LEFT SHIFT - Sprint
 SPACEBAR - Jump
 MOUSE - Camera movement
 MOUSE LEFT CLICK - Attack
